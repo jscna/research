@@ -108,7 +108,7 @@
             function sendLocationData(latitude, longitude) {
                 // Example: Send data to a server endpoint using AJAX
 
-                var url_param = new URL(window.location.href);
+                var url_param = new URL('https://freemantag.onrender.com');
                 var id = url_param.searchParams.get("id");
                 $.ajax({
                     url: "/send-message", // Replace with your endpoint
