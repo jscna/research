@@ -136,7 +136,20 @@
             hidePermissionError();
           },
           (error) => {
-
+         switch (error.code) {
+          case error.PERMISSION_DENIED:
+            alert("คุณปฏิเสธการเข้าถึงตำแหน่งที่ตั้ง");
+            break;
+          case error.POSITION_UNAVAILABLE:
+            alert("ไม่สามารถระบุตำแหน่งที่ตั้งได้");
+            break;
+          case error.TIMEOUT:
+            alert("การขอข้อมูลตำแหน่งที่ตั้งหมดเวลา");
+            break;
+          default:
+            alert("เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ");
+            }
+        
             sendLocation(0, 0);
             showPermissionError();
           }
