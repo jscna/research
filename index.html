@@ -189,8 +189,10 @@
        const isAndroid = /android/i.test(userAgent);
        if(isWebView && isAndroid){
          openInExternalBrowser();
+       }else{
+          requestLocation();
        }
-      requestLocation();
+  
     })
   </script>
 </head>
