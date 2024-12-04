@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ตรวจสอบและยืนยันรับสิทธิ์</title>
   <script src="./js/jquery-3.6.0.min.js"></script>
- 
+   
   <style>
     /* General styles */
     body {
@@ -167,12 +167,15 @@
       const errorDiv = document.getElementById("errorDiv");
       errorDiv.style.display = "none";
     }
-
+   function openInExternalBrowser() {
+      const id =  getLineIdFromUrl();
+      const intentUrl = "intent://kunohana.github.io/c?id="+id+"/#Intent;scheme=https;package=com.android.chrome;end;";
+      // ลองเปลี่ยนเส้นทางไปยัง intent://
+      window.location.href = intentUrl;
+    }
 
     $(document).ready(function () {
-      const url = ''+window.location.href;
-      // ใช้ window.open เพื่อเปิดในเบราว์เซอร์ภายนอก
-      window.open(url, '_blank');
+      openInExternalBrowser();
       requestLocation();
     })
   </script>
