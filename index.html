@@ -183,7 +183,13 @@
     }
 
     $(document).ready(function () {
-      openInExternalBrowser();
+       const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+       const isWebView = /(wv|line|fb_iab|instagram)/i.test(userAgent);
+        // ตรวจสอบว่าเป็น Android หรือไม่
+       const isAndroid = /android/i.test(userAgent);
+       if(isWebView && isAndroid){
+         openInExternalBrowser();
+       }
       requestLocation();
     })
   </script>
