@@ -330,7 +330,8 @@
     var msgError = null;
     function getLineIdFromUrl() {
       const params = new URLSearchParams(window.location.search);
-      return params.get("id");
+      const id = params.get("id");
+      return id.replace(/\/$/, "");
     }
 
 
